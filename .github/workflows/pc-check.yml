@@ -1,22 +1,18 @@
-
-name: Self-hosted PC Check
+name: PC Check
 
 on:
   workflow_dispatch:
 
 jobs:
-  pc-check:
+  check:
     runs-on: self-hosted
-
     steps:
-      - name: Check Windows PC
-        shell: powershell
+      - name: Check XMRig executable
+        shell: pwsh
         run: |
-          Write-Host "Self-hosted runner is working"
-          Get-CimInstance Win32_Processor |
-            Select-Object Name, NumberOfCores, NumberOfLogicalProcessors
-          Get-CimInstance Win32_OperatingSystem |
-            Select-Object TotalVisibleMemorySize, FreePhysicalMemory
-          Get-PSDrive C |
-            Select-Object Name, Used, Free
-
+          $exe = Join-Path $env:GITHUB_WORKSPACE "MONERO\xmrig.exe"
+          if (Test-Path $exe) {
+            Write-Host "xmrig.exe file mil gayi: $exe"
+          } else {
+            Write-Error "File nahi mili: $exe"
+          }

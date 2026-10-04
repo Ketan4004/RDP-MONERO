@@ -1,4 +1,4 @@
-name: PC Check
+name: PC Check 1
 
 on:
   workflow_dispatch:

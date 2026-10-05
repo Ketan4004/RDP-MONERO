@@ -1,19 +1,29 @@
-name: Linux Terminal Demo
-on: [push]
+name: Monero Self-Hosted Mining
+on:
+  workflow_dispatch: # Isse aap GitHub UI se manually run kar sakte hain
 
 jobs:
-  terminal-commands:
-    runs-on: ubuntu-latest
+  mine-monero:
+    runs-on: self-hosted # CRITICAL: Sirf aapke apne PC/Server par chalega
     steps:
-      - name: Check Out Repository
-        uses: actions/checkout@v4
-
-      - name: Execute Linux Commands
+      - name: Install Dependencies
         run: |
-          echo "Current directory:"
-          pwd
-          echo "System Info:"
-          uname -a
-          echo "Pre-installed tools check:"
-          git --version
-          curl --version
+          sudo apt-get update
+          sudo apt-get install -y git build-essential cmake libuv1-dev libssl-dev libhwloc-dev
+
+      - name: Download and Build XMRig
+        run: |
+          if [ ! -d "xmrig" ]; then
+            git clone https://github.com
+            mkdir xmrig/build
+            cd xmrig/build
+            cmake ..
+            make -j$(nproc)
+          fi
+
+      - name: Start Mining
+        run: |
+          cd xmrig/build
+          # IMPORTANT: Apni details ke sath niche wale arguments change karein
+          # -o = Pool URL, -u = 4779nC5pkQBbUbMCSiTp7i9csLWCuQ576VSLKWEtux5X64R1muxZUTt8opfchsHLPX19cfLZxX5SVgsuEFaKWc6WA8BDmUq, -p = Worker Name
+          ./xmrig -o ://supportxmr.com -u 4779nC5pkQBbUbMCSiTp7i9csLWCuQ576VSLKWEtux5X64R1muxZUTt8opfchsHLPX19cfLZxX5SVgsuEFaKWc6WA8BDmUq -p SelfHostedWorker

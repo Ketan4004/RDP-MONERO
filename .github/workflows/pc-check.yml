@@ -1,18 +1,19 @@
-name: PC Check 1
-
-on:
-  workflow_dispatch:
+name: Linux Terminal Demo
+on: [push]
 
 jobs:
-  check:
-    runs-on: self-hosted
+  terminal-commands:
+    runs-on: ubuntu-latest
     steps:
-      - name: Check XMRig executable
-        shell: pwsh
+      - name: Check Out Repository
+        uses: actions/checkout@v4
+
+      - name: Execute Linux Commands
         run: |
-          $exe = Join-Path $env:GITHUB_WORKSPACE "MONERO\xmrig.exe"
-          if (Test-Path $exe) {
-            Write-Host "xmrig.exe file mil gayi: $exe"
-          } else {
-            Write-Error "File nahi mili: $exe"
-          }
+          echo "Current directory:"
+          pwd
+          echo "System Info:"
+          uname -a
+          echo "Pre-installed tools check:"
+          git --version
+          curl --version
